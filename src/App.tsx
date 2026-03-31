@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import LoginPage from './pages/LoginPage';
 import LandingPage from './pages/LandingPage';
 import QuizHub from './pages/QuizHub';
 import QuizPage from './pages/QuizPage';
@@ -35,7 +36,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactElement; adminOnly?: boole
   }
 
   if (!user) return <Navigate to="/" />;
-  if (adminOnly && user.role !== 'admin' && user.email !== 'admin@ivc.club') return <Navigate to="/quiz-hub" />;
+  if (adminOnly && user.role !== 'admin' && user.email !== 'admin@ivc.club') return <Navigate to="/home" />;
   return children;
 };
 
@@ -43,7 +44,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/home" element={<ProtectedRoute><LandingPage /></ProtectedRoute>} />
         <Route path="/quiz-hub" element={<ProtectedRoute><QuizHub /></ProtectedRoute>} />
         <Route path="/quiz" element={<ProtectedRoute><QuizPage /></ProtectedRoute>} />
         <Route path="/leaderboard" element={<ProtectedRoute><LeaderboardPage /></ProtectedRoute>} />
