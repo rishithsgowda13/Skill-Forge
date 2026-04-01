@@ -6,7 +6,7 @@
   --color-card-bg: #ffffff;
   --color-text-main: #0f172a;
   --color-text-muted: #64748b;
-  --color-accent-blue: #3b82f6;
+  --color-accent-blue: #2563eb;
   --color-accent-green: #10b981;
   --color-accent-orange: #f59e0b;
   --color-accent-purple: #8b5cf6;
@@ -27,6 +27,7 @@ body {
   font-family: var(--font-family-body);
   min-height: 100vh;
   overflow-x: hidden;
+  line-height: 1.6;
 }
 
 /* Typography Utility */
@@ -34,17 +35,33 @@ body {
   font-family: var(--font-family-display);
 }
 
-/* White Glass/Soft Shadow Card */
+/* Premium Card Styles */
 .premium-card {
   background: var(--color-card-bg);
   border: 1px solid var(--color-border-light);
-  border-radius: 16px;
+  border-radius: 20px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .premium-card:hover {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.07), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Global Button Base */
+.btn-primary {
+  @apply font-display font-extrabold uppercase tracking-[0.15em] transition-all cursor-pointer flex items-center justify-center gap-3 active:scale-[0.98] rounded-xl;
+  padding: 1rem 2.5rem;
+  font-size: 0.85rem;
+}
+
+.btn-large {
+  @apply py-5 px-12 text-base;
+}
+
+.btn-small {
+  @apply py-3 px-6 text-xs;
 }
 
 /* Progress Bar Colors (Minute Colors) */
