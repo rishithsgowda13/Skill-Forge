@@ -88,7 +88,7 @@ export default function QuizConfigurePage({ params }) {
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex font-sans text-black">
       <Sidebar />
-      <main className="flex-1 ml-0 lg:ml-[240px] p-6 md:p-14 space-y-10 min-h-screen flex flex-col">
+      <main className="flex-1 ml-0 lg:ml-0 lg:ml-[280px] p-6 md:p-14 space-y-10 min-h-screen flex flex-col">
          {/* Breadcrumbs */}
          <button 
            onClick={() => router.push("/quiz/admin/quizzes")}
