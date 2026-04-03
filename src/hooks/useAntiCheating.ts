@@ -1,13 +1,10 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-
 interface AntiCheatingProps {
   onViolation: (count: number, message: string) => void;
   violations: number;
 }
 
 export const useAntiCheating = ({ onViolation, violations }: AntiCheatingProps) => {
-  const navigate = useNavigate();
 
   useEffect(() => {
     // 1. Tab Switching Detection
