@@ -83,9 +83,9 @@ export default function Sidebar() {
       {/* Mobile Toggle Button */}
       <button 
         onClick={toggleSidebar}
-        className="fixed top-6 left-6 z-[60] lg:hidden p-4 bg-white rounded-2xl shadow-2xl shadow-blue-200 text-[#0F172A] border border-[#f1f5f9] active:scale-90 transition-transform"
+        className="fixed top-4 left-4 z-[60] lg:hidden p-2.5 bg-white rounded-xl shadow-xl shadow-blue-200 text-[#0F172A] border border-[#f1f5f9] active:scale-90 transition-transform"
       >
-        {isOpen ? <X size={24} /> : <Menu size={24} />}
+        {isOpen ? <X size={18} /> : <Menu size={18} />}
       </button>
 
       {/* Backdrop for mobile */}
@@ -101,7 +101,7 @@ export default function Sidebar() {
         )}
       </AnimatePresence>
 
-      <aside className={`fixed left-0 top-0 bottom-0 w-[280px] bg-white border-r border-[#E8EDF2] flex flex-col z-[58] transition-transform duration-500 ease-in-out lg:translate-x-0 ${
+      <aside className={`fixed left-0 top-0 bottom-0 w-[240px] bg-white border-r border-[#E8EDF2] flex flex-col z-[58] transition-transform duration-500 ease-in-out lg:translate-x-0 ${
         isOpen ? "translate-x-0" : "-translate-x-full"
       }`}>
         {/* Logo */}
@@ -125,7 +125,7 @@ export default function Sidebar() {
         {/* Nav Items */}
         <nav className="flex-1 px-6 py-4 space-y-2">
           {navItems.map((item) => {
-            const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
+            const isActive = pathname === item.href || (item.label !== "Dashboard" && pathname.startsWith(item.href));
             return (
               <Link
                 key={item.href}
