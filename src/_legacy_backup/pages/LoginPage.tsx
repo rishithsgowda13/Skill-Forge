@@ -1,18 +1,22 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { supabase } from '../supabase';
+import { useRouter } from 'next/navigation';
+import { supabase } from '../../lib/supabase';
 import { motion } from 'framer-motion';
-import ivcLogo from '../assets/ivc_logo.jpg';
+import ivcLogo from '../../assets/ivc_logo.jpg';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!supabase) {
+      setError('SUPABASE_NOT_CONFIGURED');
+      return;
+    }
     setError('');
     
     if (!email || !password) {
@@ -23,16 +27,16 @@ const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      const { data, error: sbErr } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error: sbErr } = await (supabase as any).auth.signInWithPassword({ email, password });
       if (sbErr) throw sbErr;
 
-      const { data: profile } = await supabase
+      const { data: profile } = await (supabase as any)
         .from('profiles')
         .select('role')
         .eq('id', data.user?.id)
         .single();
 
-      navigate(profile?.role === 'admin' ? '/admin' : '/quiz-hub');
+      router.push(profile?.role === 'admin' ? '/admin' : '/quiz-hub');
     } catch (err: any) {
       setError(err.message || 'AUTHENTICATION_FAILED');
     } finally {
@@ -41,8 +45,9 @@ const LoginPage: React.FC = () => {
   };
 
   const handleGoogleLogin = async () => {
+    if (!supabase) return;
     setLoading(true);
-    const { error } = await supabase.auth.signInWithOAuth({
+    const { error } = await (supabase as any).auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: window.location.origin + '/quiz-hub'

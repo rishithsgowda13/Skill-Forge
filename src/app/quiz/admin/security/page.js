@@ -114,11 +114,12 @@ export default function AdminSecurityPage() {
                          </div>
                       </div>
                       
-                      <div className="flex flex-col items-end gap-2">
-                         <div className="w-14 h-8 rounded-full bg-[#2563EB] flex items-center justify-end px-1.5 opacity-50 cursor-not-allowed">
-                            <div className="w-5 h-5 bg-white rounded-full shadow-sm" />
+                      <div className="flex flex-col items-end gap-3">
+                         <div className="px-4 py-2 bg-blue-50 border border-blue-100 rounded-xl flex items-center gap-2 shadow-sm">
+                            <Lock size={12} className="text-[#2563EB]" />
+                            <span className="text-[9px] font-black text-[#2563EB] uppercase tracking-widest">Enforced</span>
                          </div>
-                         <span className="text-[9px] font-black text-[#2563EB] uppercase tracking-tighter">System Enforced</span>
+                         <p className="text-[8px] font-black text-[#94A3B8] uppercase tracking-[0.2em] text-right">Node Restriction Active</p>
                       </div>
                    </motion.div>
                  ))}

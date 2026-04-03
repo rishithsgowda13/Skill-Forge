@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import Header from '../components/Header';
+import Header from '../Header';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, User, Zap } from 'lucide-react';
-import { supabase } from '../supabase';
+import { supabase } from '../../lib/supabase';
 
 interface LeaderboardEntry {
   id: string;
@@ -16,7 +16,11 @@ const LeaderboardPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchLeaders = async () => {
-    const { data } = await supabase
+    if (!supabase) {
+      setLoading(false);
+      return;
+    }
+    const { data } = await (supabase as any)
       .from('leaderboard')
       .select('*')
       .limit(10);
@@ -27,15 +31,17 @@ const LeaderboardPage: React.FC = () => {
   useEffect(() => {
     fetchLeaders();
 
+    if (!supabase) return;
+
     // Subscribe to new responses to refresh leaderboard
-    const ch = supabase
+    const ch = (supabase as any)
       .channel('realtime:responses')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'responses' }, () => {
         fetchLeaders();
       })
       .subscribe();
 
-    return () => { supabase.removeChannel(ch); };
+    return () => { (supabase as any).removeChannel(ch); };
   }, []);
 
   const sorted = [...leaders].sort((a, b) => b.score - a.score).map((l, i) => ({ ...l, rank: i + 1 }));

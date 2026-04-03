@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import Header from '../components/Header';
+import Header from '../Header';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldCheck, Plus, Trash2, Send, Users, Lock, Zap, Layout } from 'lucide-react';
-import bgImage from '../assets/futuristic_bg.png';
+import bgImage from '../../assets/futuristic_bg.png';
 
 const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'questions' | 'security' | 'leaderboard'>('questions');
@@ -33,6 +33,8 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col relative bg-[#f8fafc]">
+      <div className="fixed inset-0 opacity-[0.4] pointer-events-none bg-cover bg-center mix-blend-overlay"
+           style={{ backgroundImage: `url(${bgImage.src || bgImage})` }} />
       <div className="fixed inset-0 opacity-[0.2] pointer-events-none"
            style={{ backgroundImage: `radial-gradient(#e2e8f0 1px, transparent 1px)`, backgroundSize: '24px 24px' }} />
 
