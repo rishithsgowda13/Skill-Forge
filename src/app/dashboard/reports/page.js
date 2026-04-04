@@ -206,77 +206,82 @@ export default function ReportsPage() {
                             </div>
 
                             {selectedCandidate.report ? (
-                               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                  {[
-                                    { label: "Overview", content: selectedCandidate.report.overview },
-                                    { label: "Applications", content: selectedCandidate.report.apps },
-                                    { label: "Thoughts", content: selectedCandidate.report.thoughts },
-                                    { label: "Improvements", content: selectedCandidate.report.improvements }
-                                  ].map(field => (
-                                     <div key={field.label} className="p-8 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[32px] space-y-4">
-                                        <label className="text-[9px] font-black text-[#94A3B8] uppercase tracking-[0.4em] block">{field.label}</label>
-                                        <p className="text-sm font-bold text-[#0F172A] leading-relaxed italic border-l-4 border-[#2563EB] pl-6 text-[#1E293B]">"{field.content}"</p>
-                                     </div>
-                                  ))}
-                               </div>
+                               <div className="grid grid-cols-1 gap-10">
+                                   {[
+                                     { label: "Overview", content: selectedCandidate.report.overview },
+                                     { label: "Applications", content: selectedCandidate.report.apps },
+                                     { label: "Thoughts", content: selectedCandidate.report.thoughts },
+                                     { label: "Improvements", content: selectedCandidate.report.improvements }
+                                   ].map(field => (
+                                      <div key={field.label} className="p-10 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[32px] space-y-4 shadow-sm hover:shadow-md transition-all">
+                                         <div className="flex items-center justify-between border-b border-slate-200 pb-3 mb-2">
+                                            <label className="text-[10px] font-black text-[#64748B] uppercase tracking-[0.4em]">{field.label}</label>
+                                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500/20" />
+                                         </div>
+                                         <p className="text-xl font-bold text-[#0F172A] leading-[1.8] italic text-[#1E293B]">
+                                            "{field.content}"
+                                         </p>
+                                      </div>
+                                   ))}
+                                </div>
                             ) : (
-                               <div className="py-20 text-center space-y-4">
-                                  <AlertCircle className="w-12 h-12 text-amber-400 mx-auto" />
-                                  <p className="text-xs font-black text-[#94A3B8] uppercase tracking-widest">No protocol payload detected for this node</p>
+                               <div className="py-24 text-center space-y-6">
+                                  <AlertCircle className="w-16 h-16 text-amber-400 mx-auto" />
+                                  <p className="text-sm font-black text-[#94A3B8] uppercase tracking-[0.2em]">No protocol payload detected for this node</p>
                                </div>
                             )}
                          </div>
 
-                         <div className="bg-white rounded-[12px] border border-[#E2E8F0] shadow-sm p-10">
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
-                               <div className="p-6 bg-[#F8FAFC] border border-[#E2E8F0] rounded-3xl">
-                                  <p className="text-[8px] font-black text-[#94A3B8] uppercase tracking-widest mb-1">AI Traces</p>
-                                  <p className="text-xl font-black text-[#2563EB]">{selectedCandidate.aiStats.checkCount}</p>
+                         <div className="bg-white rounded-[24px] border border-[#E2E8F0] shadow-sm p-12">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+                               <div className="p-8 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[32px]">
+                                  <p className="text-[11px] font-black text-[#94A3B8] uppercase tracking-widest mb-2">AI Traces</p>
+                                  <p className="text-4xl font-black text-[#2563EB]">{selectedCandidate.aiStats.checkCount}</p>
                                </div>
-                               <div className="p-6 bg-[#F8FAFC] border border-[#E2E8F0] rounded-3xl">
-                                  <p className="text-[8px] font-black text-[#94A3B8] uppercase tracking-widest mb-1">Edit Count</p>
-                                  <p className="text-xl font-black text-[#0F172A]">{selectedCandidate.editCount}</p>
+                               <div className="p-8 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[32px]">
+                                  <p className="text-[11px] font-black text-[#94A3B8] uppercase tracking-widest mb-2">Edit Count</p>
+                                  <p className="text-4xl font-black text-[#0F172A]">{selectedCandidate.editCount}</p>
                                </div>
-                               <div className="p-6 bg-[#F8FAFC] border border-[#E2E8F0] rounded-3xl">
-                                  <p className="text-[8px] font-black text-[#94A3B8] uppercase tracking-widest mb-1">Prompt Intensity</p>
-                                  <p className="text-xl font-black text-amber-500">{selectedCandidate.aiStats.promptScore}</p>
+                               <div className="p-8 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[32px]">
+                                  <p className="text-[11px] font-black text-[#94A3B8] uppercase tracking-widest mb-2">Prompt Intensity</p>
+                                  <p className="text-4xl font-black text-amber-500">{selectedCandidate.aiStats.promptScore}</p>
                                </div>
-                               <div className="p-6 bg-[#F8FAFC] border border-[#E2E8F0] rounded-3xl">
-                                  <p className="text-[8px] font-black text-[#94A3B8] uppercase tracking-widest mb-1">Sync Status</p>
-                                  <p className="text-xl font-black text-emerald-500">100%</p>
+                               <div className="p-8 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[32px]">
+                                  <p className="text-[11px] font-black text-[#94A3B8] uppercase tracking-widest mb-2">Sync Status</p>
+                                  <p className="text-4xl font-black text-emerald-500">100%</p>
                                </div>
                             </div>
 
-                            <div className="flex items-center gap-4 mb-10 pb-8 border-b border-[#F1F5F9]">
-                               <div className="w-12 h-12 bg-[#F1F5F9] rounded-2xl flex items-center justify-center">
-                                  <Cpu className="text-[#2563EB] w-6 h-6" />
+                            <div className="flex items-center gap-6 mb-12 pb-10 border-b border-[#F1F5F9]">
+                               <div className="w-14 h-14 bg-[#F1F5F9] rounded-2xl flex items-center justify-center">
+                                  <Cpu className="text-[#2563EB] w-8 h-8" />
                                </div>
                                <div>
-                                  <h3 className="text-xl font-black text-[#0F172A] uppercase tracking-tighter">AI Scrutiny Audit</h3>
-                                  <p className="text-[10px] font-black text-[#94A3B8] uppercase tracking-widest">Historical trace detection & entropy</p>
+                                  <h3 className="text-2xl font-black text-[#0F172A] uppercase tracking-tighter">AI Scrutiny Audit</h3>
+                                  <p className="text-[11px] font-black text-[#94A3B8] uppercase tracking-widest">Historical trace detection & entropy</p>
                                </div>
                             </div>
 
-                            <div className="space-y-4">
+                            <div className="space-y-6">
                                {selectedCandidate.aiStats.history.length > 0 ? selectedCandidate.aiStats.history.map((trace, idx) => (
-                                 <div key={idx} className="flex items-center justify-between p-7 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[12px] hover:shadow-md transition-all group">
-                                    <div className="flex items-center gap-6">
-                                       <div className="w-10 h-10 rounded-xl bg-white border border-[#E2E8F0] flex items-center justify-center text-[10px] font-black text-[#94A3B8]">
+                                 <div key={idx} className="flex items-center justify-between p-8 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[24px] hover:shadow-lg transition-all group">
+                                    <div className="flex items-center gap-8">
+                                       <div className="w-12 h-12 rounded-[16px] bg-white border border-[#E2E8F0] flex items-center justify-center text-sm font-black text-[#94A3B8] group-hover:border-blue-200 group-hover:text-blue-600">
                                           0{idx + 1}
                                        </div>
                                        <div>
-                                          <p className="text-[9px] font-black text-[#94A3B8] uppercase tracking-widest mb-1">Time Trace</p>
-                                          <p className="text-sm font-black text-[#0F172A]">{trace.time}</p>
+                                          <p className="text-[11px] font-black text-[#94A3B8] uppercase tracking-widest mb-1">Time Trace</p>
+                                          <p className="text-lg font-black text-[#0F172A]">{trace.time}</p>
                                        </div>
                                     </div>
                                     <div className="text-right">
-                                       <p className="text-[9px] font-black text-[#94A3B8] uppercase tracking-widest mb-1">Detection Score</p>
-                                       <p className="text-xl font-black text-[#2563EB]">{trace.score}</p>
+                                       <p className="text-[11px] font-black text-[#94A3B8] uppercase tracking-widest mb-1">Detection Score</p>
+                                       <p className="text-3xl font-black text-[#2563EB]">{trace.score}</p>
                                     </div>
                                  </div>
                                )) : (
-                                  <div className="py-10 text-center">
-                                     <p className="text-[10px] font-black text-[#94A3B8] uppercase tracking-widest">Zero historical checks performed</p>
+                                  <div className="py-16 text-center">
+                                     <p className="text-sm font-black text-[#94A3B8] uppercase tracking-[0.2em]">Zero historical checks performed</p>
                                   </div>
                                )}
                             </div>
