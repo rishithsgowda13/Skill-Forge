@@ -15,8 +15,7 @@ import {
   Hash,
   CheckCircle2,
   ArrowRight,
-  Clock,
-  Plus
+  Clock
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -140,47 +139,45 @@ export default function QuizConfigurePage({ params }) {
             <div className="w-full max-w-[1800px] space-y-12">
                <div className="bg-white rounded-[40px] border border-[#E2E8F0] shadow-sm p-8 space-y-8">
                   <form onSubmit={handleCreateQuestion} className="space-y-8">
-                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-16">
+                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-16 items-stretch">
                         {/* Left Side: Question */}
-                        <div className="flex flex-col">
-                           <div className="space-y-4 flex-1 flex flex-col">
-                              <label className="text-[11px] font-black text-[#94A3B8] uppercase tracking-[0.4em] ml-6">Challenge Content Matrix</label>
-                              <textarea 
-                                required
-                                value={newQuestion.content}
-                                onChange={(e) => setNewQuestion({...newQuestion, content: e.target.value})}
-                                placeholder="Enter the technical challenge or question protocol..."
-                                className="w-full bg-[#F8FAFC] border-2 border-[#E2E8F0] rounded-[32px] p-8 text-xl font-bold text-[#0F172A] focus:outline-none focus:border-[#2563EB] min-h-[440px] flex-1 resize-none"
-                              />
+                        <div className="flex flex-col h-full space-y-4">
+                           <label className="text-[11px] font-black text-[#94A3B8] uppercase tracking-[0.4em] ml-6">Challenge Content Matrix</label>
+                           <textarea 
+                             required
+                             value={newQuestion.content}
+                             onChange={(e) => setNewQuestion({...newQuestion, content: e.target.value})}
+                             placeholder="Enter the technical challenge or question protocol..."
+                             className="w-full bg-[#F8FAFC] border-2 border-[#E2E8F0] rounded-[32px] p-8 text-xl font-bold text-[#0F172A] focus:outline-none focus:border-[#2563EB] flex-1 resize-none"
+                           />
 
-                              <div className="flex flex-col gap-4 pt-2 mt-auto">
-                                 <button
-                                   type="submit"
-                                   disabled={submitting || !newQuestion.content || newQuestion.options.some(opt => !opt) || !newQuestion.time_limit || !newQuestion.points}
-                                   className={`w-full py-6 rounded-[28px] font-black text-xl uppercase tracking-[0.2em] shadow-2xl transition-all flex items-center justify-center gap-4 group ${
-                                     (submitting || !newQuestion.content || newQuestion.options.some(opt => !opt) || !newQuestion.time_limit || !newQuestion.points)
-                                       ? "bg-slate-200 text-slate-400 cursor-not-allowed shadow-none"
-                                       : "bg-[#0F172A] text-white hover:scale-[1.02] active:scale-95"
-                                   }`}
-                                 >
-                                    <span>{submitting ? "Authorizing..." : "Authorize Node"}</span>
-                                    <Zap className={`${(submitting || !newQuestion.content || newQuestion.options.some(opt => !opt) || !newQuestion.time_limit || !newQuestion.points) ? "text-slate-300" : "text-blue-500 fill-blue-500"} w-8 h-8 group-hover:animate-pulse`} />
-                                 </button>
+                           <div className="flex flex-col gap-4 pt-2">
+                              <button
+                                type="submit"
+                                disabled={submitting || !newQuestion.content || newQuestion.options.some(opt => !opt) || !newQuestion.time_limit || !newQuestion.points}
+                                className={`w-full py-6 rounded-[28px] font-black text-xl uppercase tracking-[0.2em] shadow-2xl transition-all flex items-center justify-center gap-4 group ${
+                                  (submitting || !newQuestion.content || newQuestion.options.some(opt => !opt) || !newQuestion.time_limit || !newQuestion.points)
+                                    ? "bg-slate-200 text-slate-400 cursor-not-allowed shadow-none"
+                                    : "bg-[#0F172A] text-white hover:scale-[1.02] active:scale-95"
+                                }`}
+                              >
+                                 <span>{submitting ? "Authorizing..." : "Authorize Node"}</span>
+                                 <Zap className={`${(submitting || !newQuestion.content || newQuestion.options.some(opt => !opt) || !newQuestion.time_limit || !newQuestion.points) ? "text-slate-300" : "text-blue-500 fill-blue-500"} w-8 h-8 group-hover:animate-pulse`} />
+                              </button>
 
-                                 <button
-                                   type="button"
-                                   onClick={() => router.push('/quiz/admin/quizzes')}
-                                   className="w-full py-6 rounded-[28px] border-2 border-[#0F172A] font-black text-xs uppercase tracking-[0.4em] text-[#0F172A] hover:bg-slate-50 transition-all flex items-center justify-center gap-4 group"
-                                 >
-                                    <span>Finish Protocol</span>
-                                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-all" />
-                                 </button>
-                              </div>
+                              <button
+                                type="button"
+                                onClick={() => router.push('/quiz/admin/quizzes')}
+                                className="w-full py-6 rounded-[28px] border-2 border-[#0F172A] font-black text-xs uppercase tracking-[0.4em] text-[#0F172A] hover:bg-slate-50 transition-all flex items-center justify-center gap-4 group"
+                              >
+                                 <span>Finish Protocol</span>
+                                 <ArrowRight size={18} className="group-hover:translate-x-1 transition-all" />
+                              </button>
                            </div>
                         </div>
 
                         {/* Right Side: Options & Correct Answer */}
-                        <div className="space-y-10">
+                        <div className="flex flex-col h-full space-y-8">
                            <div className="grid grid-cols-1 gap-6">
                               {['A', 'B', 'C', 'D'].map((label, idx) => (
                                  <div key={label} className="space-y-3">
