@@ -192,41 +192,53 @@ export default function CandidatePlayPage() {
           <AnimatePresence mode="wait">
              {quiz.status === 'showing-question' ? (
                 <>
-                   {[0, 1, 2, 3].map((idx) => {
-                     const colors = [
-                       'bg-[#2563EB] shadow-blue-200',
-                       'bg-[#EF4444] shadow-red-200',
-                       'bg-[#F59E0B] shadow-amber-200',
-                       'bg-[#10B981] shadow-emerald-200'
-                     ];
-                     const labels = ['A', 'B', 'C', 'D'];
-                     
-                     return (
-                       <motion.button
-                         key={idx}
-                         initial={{ scale: 0.9, opacity: 0 }}
-                         animate={{ scale: 1, opacity: 1 }}
-                         exit={{ scale: 0.9, opacity: 0 }}
-                         whileTap={{ scale: 0.95 }}
-                         disabled={selectedOption !== null}
-                         onClick={() => handleSelect(idx)}
-                         className={`relative rounded-[40px] flex flex-col items-center justify-center text-white transition-all overflow-hidden ${
-                           selectedOption === idx ? 'ring-8 ring-primary-blue/20 scale-[0.98]' : 
-                           selectedOption !== null ? 'opacity-30 grayscale-[30%]' : ''
-                         } ${colors[idx]} shadow-2xl`}
-                       >
-                          <span className="text-6xl font-black opacity-20 absolute inset-0 flex items-center justify-center scale-[3] pointer-events-none">
-                            {labels[idx]}
-                          </span>
-                          <span className="text-5xl font-black relative z-10">{labels[idx]}</span>
-                          {selectedOption === idx && (
-                             <div className="absolute top-6 right-6">
-                                <CheckCircle2 className="w-8 h-8 text-white" />
-                             </div>
-                          )}
-                       </motion.button>
-                     );
-                   })}
+                    {[0, 1, 2, 3].map((idx) => {
+                      const colors = [
+                        'bg-[#2563EB] shadow-blue-200',
+                        'bg-[#EF4444] shadow-red-200',
+                        'bg-[#F59E0B] shadow-amber-200',
+                        'bg-[#10B981] shadow-emerald-200'
+                      ];
+                      const labels = ['A', 'B', 'C', 'D'];
+                      const optionText = currentQuestion?.options?.[idx] || labels[idx];
+                      
+                      return (
+                        <motion.button
+                          key={idx}
+                          initial={{ scale: 0.9, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          exit={{ scale: 0.9, opacity: 0 }}
+                          whileTap={{ scale: 0.95 }}
+                          disabled={selectedOption !== null}
+                          onClick={() => handleSelect(idx)}
+                          className={`relative rounded-[40px] flex flex-col items-center justify-center text-white transition-all overflow-hidden p-8 text-center group/opt ${
+                            selectedOption === idx ? 'ring-8 ring-primary-blue/20 scale-[0.98]' : 
+                            selectedOption !== null ? 'opacity-30 grayscale-[30%]' : ''
+                          } ${colors[idx]} shadow-2xl`}
+                        >
+                           <span className="text-8xl font-black opacity-10 absolute inset-0 flex items-center justify-center scale-[3] pointer-events-none group-hover/opt:scale-[4] transition-transform duration-700">
+                             {labels[idx]}
+                           </span>
+                           
+                           <div className="relative z-10 flex flex-col items-center gap-4">
+                              <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl font-black mb-2 border border-white/30">
+                                 {labels[idx]}
+                              </div>
+                              <span className="text-xl md:text-2xl font-extrabold tracking-tight leading-tight max-w-[280px]">
+                                {optionText}
+                              </span>
+                           </div>
+
+                           {selectedOption === idx && (
+                              <div className="absolute top-8 right-8">
+                                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
+                                    <CheckCircle2 className="w-10 h-10 text-white" />
+                                 </motion.div>
+                              </div>
+                           )}
+                        </motion.button>
+                      );
+                    })}
                 </>
              ) : (
                 <div className="col-span-full bg-white rounded-[40px] border border-[#E2E8F0] border-dashed flex flex-col items-center justify-center p-12 text-center">
