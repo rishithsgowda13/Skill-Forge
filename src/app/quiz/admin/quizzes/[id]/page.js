@@ -158,19 +158,19 @@ export default function QuizConfigurePage({ params }) {
             <span>Back to Protocols</span>
          </button>
 
-         <div className="flex justify-between items-center mb-16">
-              <div className="flex items-center gap-6">
-                 <div className="flex items-center gap-3 bg-white px-8 py-4 rounded-[24px] border border-[#E2E8F0] shadow-sm">
+         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-10 md:mb-16">
+              <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-4 md:gap-6 w-full lg:w-auto">
+                 <div className="flex items-center gap-3 bg-white px-6 md:px-8 py-3 md:py-4 rounded-[20px] md:rounded-[24px] border border-[#E2E8F0] shadow-sm w-full sm:w-auto">
                     <Hash size={18} className="text-[#2563EB]" />
-                    <span className="text-sm font-black text-[#0F172A] uppercase tracking-widest leading-none">
-                       {questions.length} Nodes Registered
+                    <span className="text-[10px] md:text-sm font-black text-[#0F172A] uppercase tracking-widest leading-none">
+                       {questions.length} <span className="hidden xs:inline">Nodes Registered</span><span className="xs:hidden">Nodes</span>
                     </span>
                  </div>
                  
-                 <div className="flex items-center gap-3 bg-white px-8 py-4 rounded-[24px] border border-[#E2E8F0] shadow-sm">
+                 <div className="flex items-center gap-3 bg-white px-6 md:px-8 py-3 md:py-4 rounded-[20px] md:rounded-[24px] border border-[#E2E8F0] shadow-sm w-full sm:w-auto">
                     <Users size={18} className="text-emerald-500" />
-                    <span className="text-sm font-black text-[#0F172A] uppercase tracking-widest leading-none">
-                       {participantsCount} Authorized Personnel
+                    <span className="text-[10px] md:text-sm font-black text-[#0F172A] uppercase tracking-widest leading-none">
+                       {participantsCount} <span className="hidden xs:inline">Authorized Personnel</span><span className="xs:hidden">Users</span>
                     </span>
                  </div>
 
@@ -178,10 +178,10 @@ export default function QuizConfigurePage({ params }) {
                    <button 
                      onClick={() => handleDeleteQuestion(editingQuestionId)}
                      disabled={submitting}
-                     className="bg-red-500 text-white px-8 py-4 rounded-[24px] flex items-center gap-3 shadow-xl shadow-red-200 hover:bg-red-600 active:scale-95 transition-all text-sm font-black uppercase tracking-widest disabled:opacity-50"
+                     className="bg-red-500 text-white px-6 md:px-8 py-3 md:py-4 rounded-[20px] md:rounded-[24px] flex items-center justify-center gap-3 shadow-xl shadow-red-200 hover:bg-red-600 active:scale-95 transition-all text-[10px] md:text-sm font-black uppercase tracking-widest disabled:opacity-50 w-full sm:w-auto"
                    >
                      <Trash2 size={18} />
-                     Delete Intelligence Node
+                     <span>Delete <span className="hidden xs:inline">Node</span></span>
                    </button>
                  ) : (
                    <button 
@@ -190,20 +190,20 @@ export default function QuizConfigurePage({ params }) {
                        setNewQuestion({ content: "", options: ["", "", "", ""], correct_answer: "A", time_limit: 30, points: 100 });
                        window.scrollTo({ top: 300, behavior: 'smooth' });
                      }}
-                     className="bg-[#2563EB] text-white px-8 py-4 rounded-[24px] flex items-center gap-3 shadow-xl shadow-blue-200 hover:scale-[1.02] active:scale-95 transition-all text-sm font-black uppercase tracking-widest"
+                     className="bg-[#2563EB] text-white px-6 md:px-8 py-3 md:py-4 rounded-[20px] md:rounded-[24px] flex items-center justify-center gap-3 shadow-xl shadow-blue-200 hover:scale-[1.02] active:scale-95 transition-all text-[10px] md:text-sm font-black uppercase tracking-widest w-full sm:w-auto"
                    >
                      <Plus size={18} strokeWidth={3} />
-                     Add Intelligence Node
+                     <span>Add <span className="hidden xs:inline">Node</span></span>
                    </button>
                  )}
               </div>
 
-             <header className="text-right">
-                <h1 className="text-5xl font-extrabold text-[#0F172A] tracking-tighter uppercase leading-none">
+             <header className="text-left lg:text-right w-full lg:w-auto">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#0F172A] tracking-tighter uppercase leading-none">
                    Configure <span className="text-[#2563EB]">Intelligence</span>
                 </h1>
-                <p className="text-[10px] font-black text-[#94A3B8] uppercase tracking-[0.3em] mt-2">
-                   {quiz?.title} • Session Protocol Analysis
+                <p className="text-[9px] md:text-[10px] font-black text-[#94A3B8] uppercase tracking-[0.3em] mt-2">
+                   {quiz?.title || "PROTOCOL"} • Session Analysis
                 </p>
              </header>
           </div>
