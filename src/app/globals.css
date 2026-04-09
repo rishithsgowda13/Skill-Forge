@@ -91,6 +91,13 @@
   transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
+@media (max-width: 768px) {
+  .dashboard-card {
+    padding: 24px;
+    border-radius: 24px;
+  }
+}
+
 .dashboard-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.1);
@@ -99,9 +106,43 @@
 
 .glass-panel {
   background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-card);
+}
+
+/* Mobile Premium Utilities */
+@layer utilities {
+  .mobile-touch-bounce {
+    @apply active:scale-[0.97] transition-transform duration-200;
+  }
+  
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Responsive Font Scaling */
+@media (max-width: 640px) {
+  html {
+    font-size: 8.5px;
+  }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
 }
 
 .cyber-button {

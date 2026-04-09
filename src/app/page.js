@@ -52,11 +52,6 @@ export default function LoginPage() {
         router.push("/quiz/admin");
         return;
       }
-      if (email === "3" && password === "3") {
-        document.cookie = "mock_session=parent; path=/";
-        router.push("/dashboard");
-        return;
-      }
 
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) { setError(error.message); setLoading(false); }
@@ -177,23 +172,30 @@ export default function LoginPage() {
 
         {/* Content Area */}
         <div 
-          className={`flex-1 flex flex-col justify-center transition-all duration-700 ease-in-out px-8 md:px-12 py-8 relative ${isSignUp ? "lg:mr-[400px]" : "lg:ml-[400px]"}`}
+          className={`flex-1 flex flex-col justify-center transition-all duration-700 ease-in-out px-6 md:px-12 py-10 relative overflow-hidden ${isSignUp ? "lg:mr-[400px]" : "lg:ml-[400px]"}`}
         >
-          <div className="max-w-[690px] mx-auto w-full space-y-8 flex flex-col items-center">
+          {/* Mobile Aesthetic Elements */}
+          <div className="lg:hidden absolute top-[-10%] right-[-10%] w-[60%] h-[40%] bg-blue-600/5 blur-[100px] pointer-events-none" />
+          <div className="lg:hidden absolute bottom-[-5%] left-[-10%] w-[50%] h-[30%] bg-indigo-600/5 blur-[100px] pointer-events-none" />
+          
+          <div className="max-w-[750px] mx-auto w-full space-y-10 md:space-y-12 flex flex-col items-center relative z-10">
             <div className="w-full space-y-6 text-center flex flex-col items-center">
-              <div className="lg:hidden flex items-center justify-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white">
-                  <ShieldCheck size={24} />
+              <div className="lg:hidden flex items-center justify-center gap-4 mb-8">
+                <div className="w-14 h-14 bg-blue-600 rounded-[22px] flex items-center justify-center text-white shadow-xl shadow-blue-200">
+                  <ShieldCheck size={28} />
                 </div>
-                <span className="text-sm font-black uppercase tracking-[0.2em] text-slate-800">Skill Forge</span>
+                <div className="text-left">
+                  <span className="text-xl font-black uppercase tracking-tighter text-slate-900 leading-none block">Skill Forge</span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600/60 leading-none mt-1 block">Nexus Node</span>
+                </div>
               </div>
               <div className="space-y-3">
-                <p className="text-[11px] font-black text-blue-600 uppercase tracking-[0.5em] mb-4">Innovators and Visionaries Club</p>
-                <h1 className="text-3xl font-black text-slate-900 tracking-tighter uppercase leading-none">
-                  Welcome
+                <p className="hidden lg:block text-[11px] font-black text-blue-600 uppercase tracking-[0.5em] mb-4">Innovators and Visionaries Club</p>
+                <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter uppercase leading-none">
+                  {isSignUp ? "Initialize" : "Welcome"}
                 </h1>
+                <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] leading-loose">Synchronize your identification parameters</p>
               </div>
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Synchronize your identification parameters below.</p>
             </div>
 
             {/* Role/Action UI */}
