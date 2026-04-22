@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase";
+import { toast } from "sonner";
 import Sidebar from "@/components/layout/Sidebar";
 import { 
   FileText, 
@@ -191,14 +192,14 @@ export default function AdminQuizzesPage() {
                           if (error) throw error;
                           
                           if (!q.access_code) {
-                            alert("CRITICAL ERROR: No access code generated for this protocol.");
+                            toast.error("CRITICAL ERROR: No access code generated for this protocol.");
                             return;
                           }
                           
                           router.push(`/quiz/host/${q.access_code}`);
                         } catch (err) {
                           console.error("Session Initialization Failed:", err);
-                          alert(`FAILED TO START SESSION: ${err.message || "Check connection to neural network."}`);
+                          toast.error(`FAILED TO START SESSION: ${err.message || "Check connection to neural network."}`);
                         }
                       }}
                       className="w-10 h-10 bg-[#0F172A] text-white rounded-xl flex items-center justify-center hover:bg-primary-blue transition-all shadow-lg active:scale-95"

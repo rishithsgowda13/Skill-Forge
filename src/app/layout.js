@@ -6,6 +6,7 @@ import MobileNav from "@/components/layout/MobileNav";
 import { Providers } from "./Providers";
 import { useSidebar } from "@/context/SidebarContext";
 import { motion } from "framer-motion";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 function DashboardLayoutContent({ children }) {
@@ -55,6 +56,7 @@ export default function RootLayout({ children }) {
       </head>
       <body className="min-h-full flex flex-col font-sans bg-page-bg text-black">
         <Providers>
+          <Toaster position="top-center" richColors />
           <DashboardLayoutContent>{children}</DashboardLayoutContent>
         </Providers>
       </body>

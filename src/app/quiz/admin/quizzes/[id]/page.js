@@ -2,6 +2,7 @@
 
 import { useEffect, useState, use } from "react";
 import { createClient } from "@/lib/supabase";
+import { toast } from "sonner";
 import Sidebar from "@/components/layout/Sidebar";
 import { 
   Plus, 
@@ -83,9 +84,9 @@ export default function QuizConfigurePage({ params }) {
     
     if (!error) {
       setQuiz({ ...quiz, access_code: newKey.toUpperCase() });
-      alert("ACCESS PROTOCOL UPDATED");
+      toast.success("ACCESS PROTOCOL UPDATED");
     } else {
-      alert("UPDATE FAILED: " + error.message);
+      toast.error("UPDATE FAILED: " + error.message);
     }
   };
 
@@ -109,8 +110,9 @@ export default function QuizConfigurePage({ params }) {
 
       if (error) {
         console.error("Critical Recalibration Error:", error);
-        alert("PROTOCOL RECALIBRATION FAILED: " + error.message);
+        toast.error("PROTOCOL RECALIBRATION FAILED: " + error.message);
       } else {
+        toast.success("PROTOCOL NODE RECALIBRATED");
         await loadData();
         window.scrollTo({ top: 300, behavior: 'smooth' });
       }
@@ -133,8 +135,9 @@ export default function QuizConfigurePage({ params }) {
 
       if (error) {
         console.error("Critical Injection Error:", error);
-        alert("PROTOCOL INJECTION FAILED: " + error.message);
+        toast.error("PROTOCOL INJECTION FAILED: " + error.message);
       } else {
+        toast.success("PROTOCOL NODE INJECTED");
         setNewQuestion({ 
           content: "", 
           correct_answer: "A", 

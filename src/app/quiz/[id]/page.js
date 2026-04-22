@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 import { Timer, ArrowRight, ShieldCheck, AlertCircle, Zap, Clock, Info } from "lucide-react";
 
 export default function QuizEngine() {
@@ -24,7 +25,7 @@ export default function QuizEngine() {
     window.history.pushState(null, null, window.location.href);
     const handlePopState = () => {
       window.history.pushState(null, null, window.location.href);
-      alert("Navigation is disabled during the quiz attempt.");
+      toast.warning("Navigation is disabled during the quiz attempt.");
     };
     window.addEventListener("popstate", handlePopState);
     
