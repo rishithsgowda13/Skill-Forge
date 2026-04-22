@@ -16,7 +16,9 @@ import {
   Database,
   Shuffle,
   Trash2,
-  AlertCircle
+  AlertCircle,
+  Download,
+  FileSpreadsheet
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -207,6 +209,68 @@ export default function Round2SelectionPage() {
     setAllocating(false);
   };
 
+  const exportAllToCSV = () => {
+    const submittedUsers = users.filter(u => u.round2_status === 'submitted');
+    if (submittedUsers.length === 0) {
+      alert("No submissions available to export.");
+      return;
+    }
+
+    const headers = ["Candidate Name", "Email", "Topic", "Research Content", "Status"];
+    const csvRows = [headers.join(",")];
+
+    submittedUsers.forEach(u => {
+      const row = [
+        `"${u.full_name || ''}"`,
+        `"${u.email || ''}"`,
+        `"${u.round2_topic || ''}"`,
+        `"${(u.round2_content || '').replace(/"/g, '""')}"`, // Escape quotes for CSV
+        `"${u.round2_status || ''}"`
+      ];
+      csvRows.push(row.join(","));
+    });
+
+    const csvContent = csvRows.join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `Round2_Bulk_Export_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const exportIndividualCSV = (user) => {
+    if (!user.round2_content) {
+      alert("This candidate hasn't submitted their research yet.");
+      return;
+    }
+
+    const headers = ["Field", "Value"];
+    const data = [
+      ["Candidate Name", user.full_name],
+      ["Email", user.email],
+      ["Assigned Topic", user.round2_topic],
+      ["Protocol Status", user.round2_status],
+      ["Research Content", user.round2_content]
+    ];
+
+    const csvRows = headers.join(",") + "\n" + 
+      data.map(row => `"${row[0]}","${(row[1] || '').replace(/"/g, '""')}"`).join("\n");
+
+    const blob = new Blob([csvRows], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `Report_${user.full_name.replace(/\s+/g, '_')}.csv`);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const filteredUsers = users.filter(u => 
     u.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
     u.email?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -259,6 +323,14 @@ export default function Round2SelectionPage() {
           >
             {allocating ? <Loader2 size={14} className="animate-spin" /> : <Shuffle size={14} />}
             <span>Run Allocation</span>
+          </button>
+
+          <button 
+            onClick={exportAllToCSV}
+            className="flex items-center gap-2 bg-emerald-600 text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-100"
+          >
+            <FileSpreadsheet size={14} />
+            <span>Bulk Export</span>
           </button>
         </div>
       </header>
@@ -340,6 +412,7 @@ export default function Round2SelectionPage() {
                     <th className="px-8 py-5 text-[10px] font-black text-[#94A3B8] uppercase tracking-widest">Candidate Identity</th>
                     <th className="px-8 py-5 text-[10px] font-black text-[#94A3B8] uppercase tracking-widest">Assigned Problem Statement</th>
                     <th className="px-8 py-5 text-[10px] font-black text-[#94A3B8] uppercase tracking-widest text-center">Protocol Status</th>
+                    <th className="px-8 py-5 text-[10px] font-black text-[#94A3B8] uppercase tracking-widest text-right">Data Export</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#F1F5F9]">
@@ -381,6 +454,19 @@ export default function Round2SelectionPage() {
                         }`}>
                           {user.round2_status || "PENDING"}
                         </span>
+                      </td>
+                      <td className="px-8 py-6 text-right">
+                        {user.round2_status === 'submitted' ? (
+                          <button 
+                            onClick={() => exportIndividualCSV(user)}
+                            className="p-2 bg-white border border-[#E2E8F0] rounded-lg text-[#64748B] hover:text-emerald-600 hover:border-emerald-100 transition-all shadow-sm active:scale-95 flex items-center gap-2 ml-auto"
+                          >
+                            <Download size={14} />
+                            <span className="text-[9px] font-black uppercase tracking-widest">CSV</span>
+                          </button>
+                        ) : (
+                          <span className="text-[8px] font-black text-[#CBD5E1] uppercase tracking-widest">No Data</span>
+                        )}
                       </td>
                     </motion.tr>
                   ))}

@@ -120,7 +120,7 @@ export default function ReportsPage() {
     const pastedData = e.clipboardData.getData("text");
     
     if (pastedData.length > 100) {
-      setPasteErrorMessage("PROTOCOL BREACH: Paste exceeds 100 character limit.");
+      setPasteErrorMessage("cannot paste more than 100 characters at once");
       setShowPasteWarning(true);
       setTimeout(() => setShowPasteWarning(false), 3000);
       return;
@@ -517,19 +517,19 @@ export default function ReportsPage() {
             <AnimatePresence>
               {showPasteWarning && (
                 <motion.div
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 50 }}
-                  className="fixed bottom-12 left-1/2 -translate-x-1/2 z-[200] bg-white border border-[#E2E8F0] shadow-2xl rounded-full px-10 py-5 flex items-center gap-6"
+                  initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 50, scale: 0.9 }}
+                  className="fixed bottom-12 left-1/2 -translate-x-1/2 z-[200] bg-white border-2 border-red-100 shadow-[0_30px_60px_-15px_rgba(220,38,38,0.3)] rounded-[32px] px-12 py-8 flex items-center gap-8 min-w-[500px]"
                 >
-                   <div className="w-10 h-10 bg-amber-50 rounded-2xl flex items-center justify-center">
-                      <AlertCircle className="text-amber-500 w-5 h-5" />
+                   <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center flex-shrink-0">
+                      <AlertCircle className="text-red-600 w-8 h-8 animate-pulse" />
                    </div>
-                    <div className="flex flex-col">
-                       <span className="text-[10px] font-black uppercase tracking-widest text-[#0F172A]">Security Protocol</span>
-                       <span className="text-[11px] font-bold text-[#94A3B8] uppercase tracking-tighter">{pasteErrorMessage}</span>
-                    </div>
-                 </motion.div>
+                   <div className="flex flex-col">
+                      <span className="text-sm font-black uppercase tracking-[0.3em] text-red-600 mb-1">Security Protocol Violation</span>
+                      <span className="text-xl font-black text-[#0F172A] uppercase tracking-tight leading-none">{pasteErrorMessage}</span>
+                   </div>
+                </motion.div>
               )}
             </AnimatePresence>
           </div>

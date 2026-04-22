@@ -28,6 +28,7 @@ export default function LoginPage() {
   const [userRole, setUserRole] = useState("candidate"); // Default to candidate protocol
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -48,6 +49,7 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setSuccessMessage(null);
 
     // Mock bypass logic
     if (!isSignUp) {
@@ -102,7 +104,7 @@ export default function LoginPage() {
           created_at: new Date().toISOString()
         }]);
 
-        setError("SYNCHRONIZATION COMPLETE: Node established. You can now Sync Credentials to enter."); 
+        setSuccessMessage("SYNCHRONIZATION COMPLETE: Node established. You can now Sync Credentials to enter."); 
         setLoading(false); 
       }
     }
@@ -311,6 +313,9 @@ export default function LoginPage() {
 
                 {error && (
                   <p className="text-sm font-black text-rose-500 uppercase tracking-widest text-center pt-2 leading-relaxed italic">{error}</p>
+                )}
+                {successMessage && (
+                  <p className="text-sm font-black text-emerald-500 uppercase tracking-widest text-center pt-2 leading-relaxed italic">{successMessage}</p>
                 )}
 
               </form>
