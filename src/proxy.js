@@ -53,44 +53,34 @@ export async function proxy(request) {
 
   // Auth/Redirect logic
   // The root path '/' is now the login page
-  const isAuthPage = path === "/";
-  const isAuthCallback = path === "/auth/callback";
   const isAdminRoute = path.startsWith("/admin") || path.startsWith("/quiz/admin");
-  const isProtectedRoute = path.startsWith("/quiz") || path.startsWith("/dashboard") || isAdminRoute;
 
   // Redirect legacy /login to root
   if (path === "/login") {
      return NextResponse.redirect(new URL("/", request.url));
   }
 
-  // Redirect to root if not authenticated and trying to access protected route
-  if (!isAuthenticated && isProtectedRoute && !isAuthCallback) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
-
-  // Redirect to dashboard if already authenticated and trying to access login/root
-  // Temporarily disabled to allow viewing the login page directly
-  /*
-  if (isAuthenticated && isAuthPage) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
-  }
-  */
-
-  // Admin access control
-  if (isAdminRoute && !isMockAdmin) {
-    // If not mock admin, check Supabase role
-    if (user) {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", user.id)
-        .single();
-
-      if (profile?.role !== "admin" && profile?.role !== "evaluator") {
-        return NextResponse.redirect(new URL("/dashboard", request.url));
-      }
-    } else {
-      return NextResponse.redirect(new URL("/", request.url));
+  // Admin access control (Strict)
+  if (isAdminRoute) {
+    if (!isAuthenticated) {
+       return NextResponse.redirect(new URL("/", request.url));
+    }
+    
+    if (!isMockAdmin) {
+       const { data: { user } } = await supabase.auth.getUser();
+       if (user) {
+         const { data: profile } = await supabase
+           .from("profiles")
+           .select("role")
+           .eq("id", user.id)
+           .single();
+   
+         if (profile?.role !== "admin" && profile?.role !== "evaluator") {
+           return NextResponse.redirect(new URL("/dashboard", request.url));
+         }
+       } else {
+         return NextResponse.redirect(new URL("/", request.url));
+       }
     }
   }
 

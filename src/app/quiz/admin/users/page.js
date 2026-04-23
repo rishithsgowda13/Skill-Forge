@@ -105,7 +105,7 @@ export default function AdminUsersPage() {
                   </div>
                 </td>
                 <td className="px-4 py-5 text-center">
-                  <span className="px-2.5 py-1 bg-[#F1F5F9] rounded-lg text-[10px] font-black text-[#64748B] uppercase">Section A</span>
+                  <span className="px-2.5 py-1 bg-[#F1F5F9] rounded-lg text-[10px] font-black text-[#64748B] uppercase">Section {u.section || "N/A"}</span>
                 </td>
                 <td className="px-4 py-5 text-center">
                   <span className="text-xs font-bold text-[#0F172A]">06</span>
@@ -118,7 +118,7 @@ export default function AdminUsersPage() {
                       </div>
                       <div className="flex items-center gap-2 text-text-secondary">
                          <Phone size={12} className="text-[#94A3B8]" />
-                         <span className="text-[11px] font-bold text-[#64748B]">+91 99****65</span>
+                         <span className="text-[11px] font-bold text-[#64748B]">{u.phone || "Not Provided"}</span>
                       </div>
                    </div>
                 </td>

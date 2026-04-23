@@ -61,11 +61,20 @@ export default function DashboardPage() {
 
     async function loadData() {
       const { data: { user } } = await supabase.auth.getUser();
+      const guestId = localStorage.getItem("node_guest_id");
+      const effectiveUserId = user?.id || guestId;
+
+      if (!effectiveUserId) {
+        setLoading(false);
+        setLeaderboardLoading(false);
+        return;
+      }
       
       // Fetch user's submissions to get attended quizzes
       const { data: userSubs } = await supabase
         .from("submissions")
         .select("*, quizzes(id, title, total_questions)")
+        .eq("user_id", effectiveUserId)
         .order("submitted_at", { ascending: false });
         
       setSubmissions(userSubs || []);

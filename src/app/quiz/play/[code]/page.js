@@ -35,15 +35,17 @@ export default function CandidatePlayPage() {
   useEffect(() => {
     async function init() {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        const guestId = localStorage.getItem("node_guest_id");
         
-        const mockSession = document.cookie
-          .split("; ")
-          .find((row) => row.startsWith("mock_session="))
-          ?.split("=")[1];
-        
-        const sessionUser = user || { 
-          id: `guest-${Math.random().toString(36).substr(2, 9)}`, 
+        if (!authUser && !guestId) {
+          router.push("/quiz/access");
+          return;
+        }
+
+        const effectiveUserId = authUser?.id || guestId;
+        const sessionUser = authUser || { 
+          id: guestId, 
           email: "guest@skillforge.io" 
         };
         setUser(sessionUser);
@@ -62,17 +64,20 @@ export default function CandidatePlayPage() {
         
         setQuiz(quizData);
 
-        // Fetch profile if exists
+        // Fetch profile
         let sessionName = "Candidate";
-        if (user) {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('full_name')
-            .eq('id', user.id)
-            .single();
-          if (profile?.full_name) sessionName = profile.full_name;
-        } else {
-          sessionName = `Guest-${sessionUser.id.split('-')[1]}`;
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', effectiveUserId)
+          .single();
+        
+        if (profile?.full_name) {
+          sessionName = profile.full_name;
+        } else if (!authUser) {
+          // If no profile yet and it's a guest, they probably bypassed registration
+          router.push("/quiz/access");
+          return;
         }
 
         // FORCE CLEANUP: Ensure absolute neural slate cleanliness
