@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
 import { useParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import SentinelProtocol from "@/components/quiz/SentinelProtocol";
@@ -21,7 +21,6 @@ import {
 export default function CandidatePlayPage() {
   const { code } = useParams();
   const router = useRouter();
-  const supabase = createClient();
   
   const [quiz, setQuiz] = useState(null);
   const [currentQuestion, setCurrentQuestion] = useState(null);
@@ -31,12 +30,13 @@ export default function CandidatePlayPage() {
   const [resultsActive, setResultsActive] = useState(false);
   const [score, setScore] = useState(0);
 
+  const [lastAnswerStatus, setLastAnswerStatus] = useState(null); // 'correct' | 'incorrect' | null
+
   useEffect(() => {
     async function init() {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         
-        // Allow mock session for demo
         const mockSession = document.cookie
           .split("; ")
           .find((row) => row.startsWith("mock_session="))
@@ -48,7 +48,6 @@ export default function CandidatePlayPage() {
         };
         setUser(sessionUser);
 
-        // Fetch Quiz
         const { data: quizData, error: qErr } = await supabase
           .from("quizzes")
           .select("*, questions(*)")
@@ -76,7 +75,9 @@ export default function CandidatePlayPage() {
           sessionName = `Guest-${sessionUser.id.split('-')[1]}`;
         }
 
-        // Subscribe to changes and presence with BROADCAST SYNC
+        // FORCE CLEANUP: Ensure absolute neural slate cleanliness
+        await supabase.removeAllChannels();
+
         const channel = supabase
           .channel(`quiz_session_${code.toUpperCase()}`)
           .on(
@@ -84,8 +85,14 @@ export default function CandidatePlayPage() {
             { event: '*', schema: 'public', table: 'quizzes', filter: `id=eq.${quizData.id}` },
             (payload) => {
               const updatedQuiz = payload.new;
-              setQuiz(prev => ({ ...prev, ...updatedQuiz }));
-              setSelectedOption(null);
+              setQuiz(prev => {
+                // Only reset selection if it's actually a NEW question
+                if (prev.current_question_index !== updatedQuiz.current_question_index) {
+                  setSelectedOption(null);
+                  setLastAnswerStatus(null);
+                }
+                return { ...prev, ...updatedQuiz };
+              });
               setResultsActive(false);
             }
           )
@@ -93,8 +100,15 @@ export default function CandidatePlayPage() {
             'broadcast',
             { event: 'state_update' },
             (payload) => {
-              setQuiz(prev => ({ ...prev, ...payload.payload }));
-              setSelectedOption(null);
+              const updatedQuiz = payload.payload;
+              setQuiz(prev => {
+                // Only reset selection if it's actually a NEW question
+                if (prev.current_question_index !== updatedQuiz.current_question_index) {
+                  setSelectedOption(null);
+                  setLastAnswerStatus(null);
+                }
+                return { ...prev, ...updatedQuiz };
+              });
               setResultsActive(false);
             }
           )
@@ -112,7 +126,9 @@ export default function CandidatePlayPage() {
         setLoading(false);
 
         return () => {
-          supabase.removeChannel(channel);
+          if (channel) {
+             supabase.removeChannel(channel);
+          }
         };
       } catch (err) {
         console.error("CRITICAL SYNC ERROR:", err);
@@ -151,23 +167,19 @@ export default function CandidatePlayPage() {
     const elapsed = (Date.now() - startTime) / 1000;
     setSelectedOption(optionIndex);
     
-    // In a real app, record the answer to Supabase immediately
     const answer = String.fromCharCode(65 + optionIndex); // A, B, C, D
-    
-    // Calculate score with Response-Time Decay logic
     const isCorrect = answer === currentQuestion.correct_answer;
+    
+    setLastAnswerStatus(isCorrect ? 'correct' : 'incorrect');
+
     if (isCorrect) {
       const timeLimit = currentQuestion.time_limit || 15;
       const basePoints = timeLimit * 10;
-      // Formula: (time_limit - floor(elapsed)) * 10
-      // If elapsed is 0.5s (1st second), penalty is 0 -> 150pts
-      // If elapsed is 1.5s (2nd second), penalty is 1 -> 140pts
       const penalty = Math.floor(elapsed);
       const pointsEarned = Math.max(10, basePoints - (penalty * 10));
       
       setScore(prev => prev + pointsEarned);
 
-      // Save answer to Supabase
       await supabase.from('submissions').insert([{
         quiz_id: quiz.id,
         user_id: user.id,
@@ -178,7 +190,6 @@ export default function CandidatePlayPage() {
         time_taken: elapsed
       }]);
     } else {
-      // Save incorrect answer
       await supabase.from('submissions').insert([{
         quiz_id: quiz.id,
         user_id: user.id,
@@ -266,7 +277,6 @@ export default function CandidatePlayPage() {
          }}
        />
        
-       {/* Top Status Bar */}
        <div className="flex items-center justify-between p-6 bg-white rounded-[32px] border border-[#E2E8F0] shadow-sm relative z-10">
           <div className="flex items-center gap-4">
              <div className="w-10 h-10 bg-primary-blue/10 rounded-xl flex items-center justify-center text-primary-blue">
@@ -282,18 +292,20 @@ export default function CandidatePlayPage() {
           </div>
        </div>
 
-       {/* Options Grid - NO QUESTION TEXT PERMITTED */}
         <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
            <AnimatePresence mode="wait">
               {quiz?.status === 'showing-question' && showOptions ? (
                  <>
                      {[0, 1, 2, 3].map((idx) => {
-                       const colors = [
-                         'bg-[#2563EB] shadow-blue-200',
-                         'bg-[#EF4444] shadow-red-200',
-                         'bg-[#F59E0B] shadow-amber-200',
-                         'bg-[#10B981] shadow-emerald-200'
-                       ];
+                       const isSelected = selectedOption === idx;
+                       const hasSelected = selectedOption !== null;
+                       
+                       // Default Blue, Selected Orange
+                       let bgColor = 'bg-[#2563EB] shadow-blue-200';
+                       if (isSelected) {
+                         bgColor = 'bg-[#F97316] shadow-orange-200'; // Orange
+                       }
+
                        const labels = ['A', 'B', 'C', 'D'];
                        const optionText = currentQuestion?.options?.[idx] || labels[idx];
                        
@@ -304,12 +316,12 @@ export default function CandidatePlayPage() {
                            animate={{ scale: 1, opacity: 1 }}
                            exit={{ scale: 0.9, opacity: 0 }}
                            whileTap={{ scale: 0.95 }}
-                           disabled={selectedOption !== null}
+                           disabled={hasSelected}
                            onClick={() => handleSelect(idx)}
                            className={`relative rounded-[40px] flex flex-col items-center justify-center text-white transition-all overflow-hidden p-8 text-center group/opt ${
-                             selectedOption === idx ? 'ring-8 ring-primary-blue/20 scale-[0.98]' : 
-                             selectedOption !== null ? 'opacity-30 grayscale-[30%]' : ''
-                           } ${colors[idx]} shadow-2xl`}
+                             isSelected ? 'ring-8 ring-orange-500/20 scale-[0.98]' : 
+                             hasSelected ? 'opacity-30 grayscale-[30%]' : 'hover:bg-blue-600'
+                           } ${bgColor} shadow-2xl`}
                          >
                             <span className="text-8xl font-black opacity-10 absolute inset-0 flex items-center justify-center scale-[3] pointer-events-none group-hover/opt:scale-[4] transition-transform duration-700">
                               {labels[idx]}
@@ -351,6 +363,40 @@ export default function CandidatePlayPage() {
                    <h2 className="text-3xl font-black text-[#0F172A] uppercase tracking-tighter mb-4">Read the Question</h2>
                    <p className="text-[18px] font-black text-[#94A3B8] uppercase tracking-[0.4em] max-w-sm">Data Injection sequence initialized. Synchronize with the primary broadcast terminal for intelligence gathering.</p>
                 </div>
+              ) : quiz?.status === 'showing-results' ? (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className={`col-span-full rounded-[40px] flex flex-col items-center justify-center p-12 text-center shadow-2xl relative overflow-hidden ${
+                    lastAnswerStatus === 'correct' ? 'bg-emerald-500 text-white' : 
+                    lastAnswerStatus === 'incorrect' ? 'bg-rose-500 text-white' : 
+                    'bg-[#0F172A] text-white'
+                  }`}
+                >
+                   <div className="absolute inset-0 bg-white/5 animate-pulse" />
+                   <div className="relative z-10 space-y-6">
+                      <div className="w-24 h-24 bg-white/20 backdrop-blur-md rounded-[32px] flex items-center justify-center mx-auto mb-4 border border-white/30">
+                        {lastAnswerStatus === 'correct' ? <CheckCircle2 size={48} /> : 
+                         lastAnswerStatus === 'incorrect' ? <XCircle size={48} /> : 
+                         <AlertCircle size={48} />}
+                      </div>
+                      <h2 className="text-5xl font-black uppercase tracking-tighter">
+                        {lastAnswerStatus === 'correct' ? 'Protocol Success' : 
+                         lastAnswerStatus === 'incorrect' ? 'Protocol Breach' : 
+                         'Scrutiny Active'}
+                      </h2>
+                      <p className="text-[18px] font-black uppercase tracking-[0.4em] opacity-70">
+                        {lastAnswerStatus === 'correct' ? 'Data validated successfully' : 
+                         lastAnswerStatus === 'incorrect' ? 'Sequence mismatched' : 
+                         'Synchronizing next node'}
+                      </p>
+                      {lastAnswerStatus === 'correct' && (
+                        <div className="mt-8 bg-black/20 px-8 py-4 rounded-2xl text-xs font-black tracking-widest uppercase">
+                          + Efficiency Bonus Applied
+                        </div>
+                      )}
+                   </div>
+                </motion.div>
               ) : (
                 <div className="col-span-full bg-white rounded-[40px] border border-[#E2E8F0] border-dashed flex flex-col items-center justify-center p-12 text-center">
                    <MonitorOff className="text-[#94A3B8] w-16 h-16 mb-6 animate-pulse" />

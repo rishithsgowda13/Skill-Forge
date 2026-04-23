@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { createClient } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
 import { useParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -22,7 +22,6 @@ import {
 export default function AdminHostPage() {
   const { code } = useParams();
   const router = useRouter();
-  const supabase = createClient();
   
   const [quiz, setQuiz] = useState(null);
   const [participants, setParticipants] = useState([]);
@@ -53,6 +52,8 @@ export default function AdminHostPage() {
     let heartbeat = null;
 
     async function loadHostData() {
+      if (!code) return;
+
       const { data: quizData } = await supabase
         .from("quizzes")
         .select("*, questions(*)")
@@ -67,7 +68,6 @@ export default function AdminHostPage() {
       setQuiz(quizData);
       quizRef.current = quizData;
       
-      // If quiz is already finished when admin enters, reset it to lobby for a fresh start
       if (quizData.status === 'finished') {
         await supabase.from("quizzes").update({ status: 'lobby', current_question_index: 0 }).eq("id", quizData.id);
         setStatus('lobby');
@@ -76,12 +76,13 @@ export default function AdminHostPage() {
       }
       
       setLoading(false);
-
-      // Initial Data Load
       fetchLeaderboard(quizData.id);
 
-      // Subscribe to communications and presence
       const canal_id = `quiz_session_${code.toUpperCase()}`;
+      
+      // FORCE CLEANUP: Remove ALL existing channels to prevent singleton conflicts
+      await supabase.removeAllChannels();
+
       channel = supabase.channel(canal_id);
       
       channel
@@ -114,9 +115,8 @@ export default function AdminHostPage() {
           }
         });
 
-      // HEARTBEAT SYNC: Every 10s broadcast state to ensure mobile nodes catch up
       heartbeat = setInterval(() => {
-        if (quizRef.current && channel) {
+        if (quizRef.current && channel && channel.state === 'joined') {
           channel.send({
             type: 'broadcast',
             event: 'state_update',
@@ -129,9 +129,14 @@ export default function AdminHostPage() {
     loadHostData();
 
     return () => {
-      if (channel) supabase.removeChannel(channel);
-      if (heartbeat) clearInterval(heartbeat);
-      if (timerRef.current) clearInterval(timerRef.current);
+      if (channel) {
+        supabase.removeChannel(channel);
+        channel = null;
+      }
+      if (heartbeat) {
+        clearInterval(heartbeat);
+        heartbeat = null;
+      }
     };
   }, [code]);
 

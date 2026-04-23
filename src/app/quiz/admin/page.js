@@ -17,7 +17,9 @@ import {
   Activity,
   Trophy,
   Medal,
-  Circle
+  Circle,
+  Trash2,
+  RefreshCcw
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -116,6 +118,28 @@ export default function AdminDashboard() {
     }
     checkAuth();
   }, []);
+
+  const deleteSubmission = async (id) => {
+    if (!confirm("Are you sure you want to delete this submission? This action cannot be undone.")) return;
+    
+    const { error } = await supabase
+      .from("submissions")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      alert("Error deleting submission: " + error.message);
+    } else {
+      setSubmissions(submissions.filter(s => s.id !== id));
+      setLeaderboard(leaderboard.filter(s => s.id !== id));
+      // Refresh stats
+      const total = submissions.length - 1;
+      setRealStats(prev => ({
+        ...prev,
+        totalSessions: total,
+      }));
+    }
+  };
 
   const statsDisplay = [
     { label: "Total Sessions", value: realStats.totalSessions, icon: Monitor, color: "#2563EB" },
@@ -300,6 +324,81 @@ export default function AdminDashboard() {
               ))}
             </div>
           </div>
+        </div>
+
+        {/* Full Submissions Registry */}
+        <div className="bg-white p-6 md:p-10 rounded-[40px] border border-[#E2E8F0] shadow-sm space-y-8">
+           <div className="flex items-center justify-between border-b border-gray-50 pb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-[#F0F7FF] rounded-xl text-[#2563EB]">
+                   <Activity size={20} />
+                </div>
+                <h3 className="text-lg font-black text-[#0F172A] uppercase tracking-tight">Recent Activity Protocol</h3>
+              </div>
+              <button 
+                onClick={() => window.location.reload()}
+                className="p-2 text-[#94A3B8] hover:text-[#2563EB] transition-colors"
+              >
+                <RefreshCcw size={16} />
+              </button>
+           </div>
+
+           <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="text-[10px] font-black text-[#94A3B8] uppercase tracking-[0.2em] border-b border-gray-50">
+                    <th className="px-4 py-4">Candidate Identity</th>
+                    <th className="px-4 py-4 text-center">Protocol Score</th>
+                    <th className="px-4 py-4 text-center">Time Vector</th>
+                    <th className="px-4 py-4 text-center">Sync Date</th>
+                    <th className="px-4 py-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {submissions.map((sub) => (
+                    <tr key={sub.id} className="group hover:bg-[#F8FAFC] transition-colors">
+                      <td className="px-4 py-5">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 bg-slate-900 rounded-xl flex items-center justify-center text-white text-[10px] font-black uppercase">
+                            {sub.profiles?.full_name?.[0] || "U"}
+                          </div>
+                          <div>
+                            <p className="text-xs font-black text-[#0F172A]">{sub.profiles?.full_name || "Unknown Entity"}</p>
+                            <p className="text-[9px] font-bold text-[#94A3B8] uppercase">{sub.profiles?.email}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-5 text-center">
+                        <span className="text-sm font-black text-[#0F172A]">{sub.total_score}</span>
+                      </td>
+                      <td className="px-4 py-5 text-center">
+                        <span className="text-[10px] font-bold text-[#64748B] uppercase">{sub.time_taken}s</span>
+                      </td>
+                      <td className="px-4 py-5 text-center">
+                        <span className="text-[10px] font-bold text-[#94A3B8] uppercase">
+                          {new Date(sub.submitted_at).toLocaleDateString()}
+                        </span>
+                      </td>
+                      <td className="px-4 py-5 text-right">
+                        <button 
+                          onClick={() => deleteSubmission(sub.id)}
+                          className="p-2 text-[#94A3B8] hover:text-[#EF4444] transition-colors"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {submissions.length === 0 && (
+                    <tr>
+                      <td colSpan="5" className="py-20 text-center text-[10px] font-black text-[#CBD5E1] uppercase tracking-[0.3em]">
+                        NO PROTOCOL SUBMISSIONS DETECTED
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+           </div>
         </div>
       </div>
     );

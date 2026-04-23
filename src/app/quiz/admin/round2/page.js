@@ -456,17 +456,38 @@ export default function Round2SelectionPage() {
                         </span>
                       </td>
                       <td className="px-8 py-6 text-right">
-                        {user.round2_status === 'submitted' ? (
-                          <button 
-                            onClick={() => exportIndividualCSV(user)}
-                            className="p-2 bg-white border border-[#E2E8F0] rounded-lg text-[#64748B] hover:text-emerald-600 hover:border-emerald-100 transition-all shadow-sm active:scale-95 flex items-center gap-2 ml-auto"
-                          >
-                            <Download size={14} />
-                            <span className="text-[9px] font-black uppercase tracking-widest">CSV</span>
-                          </button>
-                        ) : (
-                          <span className="text-[8px] font-black text-[#CBD5E1] uppercase tracking-widest">No Data</span>
-                        )}
+                        <div className="flex items-center justify-end gap-3">
+                          {user.round2_status === 'submitted' ? (
+                            <button 
+                              onClick={() => exportIndividualCSV(user)}
+                              className="p-2 bg-white border border-[#E2E8F0] rounded-lg text-[#64748B] hover:text-emerald-600 hover:border-emerald-100 transition-all shadow-sm active:scale-95 flex items-center gap-2"
+                            >
+                              <Download size={14} />
+                              <span className="text-[9px] font-black uppercase tracking-widest">CSV</span>
+                            </button>
+                          ) : (
+                            <span className="text-[8px] font-black text-[#CBD5E1] uppercase tracking-widest">No Data</span>
+                          )}
+                          
+                          {user.round2_topic && (
+                            <button 
+                              onClick={async () => {
+                                if (!confirm("Are you sure you want to reset this candidate's Round 2 protocol? This will delete their assigned topic and submitted report.")) return;
+                                const { error } = await supabase.from("profiles").update({
+                                  round2_topic: null,
+                                  round2_content: null,
+                                  round2_status: null
+                                }).eq("id", user.id);
+                                if (error) alert(error.message);
+                                else loadUsers();
+                              }}
+                              className="p-2 text-[#94A3B8] hover:text-[#EF4444] transition-colors"
+                              title="Reset Protocol"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </motion.tr>
                   ))}
