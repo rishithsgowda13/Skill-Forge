@@ -49,6 +49,9 @@ export default function AdminHostPage() {
   }, [status, currentQuestion?.id]);
 
   useEffect(() => {
+    let channel = null;
+    let heartbeat = null;
+
     async function loadHostData() {
       const { data: quizData } = await supabase
         .from("quizzes")
@@ -79,8 +82,9 @@ export default function AdminHostPage() {
 
       // Subscribe to communications and presence
       const canal_id = `quiz_session_${code.toUpperCase()}`;
-      const channel = supabase
-        .channel(canal_id)
+      channel = supabase.channel(canal_id);
+      
+      channel
         .on(
           'postgres_changes', 
           { event: 'INSERT', schema: 'public', table: 'submissions', filter: `quiz_id=eq.${quizData.id}` },
@@ -103,17 +107,16 @@ export default function AdminHostPage() {
           const users = Object.entries(usersMap).map(([id, full_name]) => ({ id, full_name }));
           setPresentUsers(users);
           if (quizData?.id) fetchLeaderboard(quizData.id, users);
+        })
+        .subscribe((status) => {
+          if (status === 'SUBSCRIBED') {
+            console.log("NEURAL LINK ESTABLISHED:", canal_id);
+          }
         });
 
-      channel.subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
-          console.log("NEURAL LINK ESTABLISHED:", canal_id);
-        }
-      });
-
       // HEARTBEAT SYNC: Every 10s broadcast state to ensure mobile nodes catch up
-      const heartbeat = setInterval(() => {
-        if (quizRef.current) {
+      heartbeat = setInterval(() => {
+        if (quizRef.current && channel) {
           channel.send({
             type: 'broadcast',
             event: 'state_update',
@@ -121,14 +124,15 @@ export default function AdminHostPage() {
           });
         }
       }, 10000);
-
-      return () => {
-        supabase.removeChannel(channel);
-        clearInterval(heartbeat);
-        clearInterval(timerRef.current);
-      };
     }
+
     loadHostData();
+
+    return () => {
+      if (channel) supabase.removeChannel(channel);
+      if (heartbeat) clearInterval(heartbeat);
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
   }, [code]);
 
   async function fetchLeaderboard(quizId, currentPresentUsers = null) {

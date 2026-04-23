@@ -338,113 +338,109 @@ export default function ReportsPage() {
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="flex-1 flex flex-col gap-6 relative z-10">
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-[#94A3B8] uppercase tracking-[0.3em] ml-4">Overview</label>
-                <textarea
-                  value={overview}
-                  value={overview}
-                  onPaste={(e) => handlePaste(e, setOverview, overview)}
-                  onChange={(e) => setOverview(e.target.value)}
-                  placeholder="Provide a brief overview of your findings..."
-                  className="w-full min-h-[120px] bg-[#F8FAFC] border border-[#E2E8F0] rounded-[12px] p-6 text-sm font-bold text-[#0F172A] focus:outline-none focus:border-[#2563EB] focus:ring-4 focus:ring-blue-100 transition-all placeholder:text-[#94A3B8] resize-none"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-[#94A3B8] uppercase tracking-[0.3em] ml-4">Applications in Real World</label>
-                <textarea
-                  value={applications}
-                  value={applications}
-                  onPaste={(e) => handlePaste(e, setApplications, applications)}
-                  onChange={(e) => setApplications(e.target.value)}
-                  placeholder="How can this be applied in real-world scenarios..."
-                  className="w-full min-h-[100px] bg-[#F8FAFC] border border-[#E2E8F0] rounded-[12px] p-6 text-sm font-bold text-[#0F172A] focus:outline-none focus:border-[#2563EB] focus:ring-4 focus:ring-blue-100 transition-all placeholder:text-[#94A3B8] resize-none"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <form onSubmit={handleSubmit} className="flex-1 flex flex-col min-h-0 relative z-10">
+              <div className="flex-1 overflow-y-auto pr-4 space-y-8 custom-scrollbar pb-8">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-[#94A3B8] uppercase tracking-[0.3em] ml-4">Your thoughts</label>
+                  <label className="text-[10px] font-black text-[#94A3B8] uppercase tracking-[0.3em] ml-4">Overview</label>
                   <textarea
-                    value={thoughts}
-                    value={thoughts}
-                    onPaste={(e) => handlePaste(e, setThoughts, thoughts)}
-                    onChange={(e) => setThoughts(e.target.value)}
-                    placeholder="Share your personal analysis..."
-                    className="w-full min-h-[100px] bg-[#F8FAFC] border border-[#E2E8F0] rounded-[12px] p-6 text-sm font-bold text-[#0F172A] focus:outline-none focus:border-[#2563EB] focus:ring-4 focus:ring-blue-100 transition-all placeholder:text-[#94A3B8] resize-none"
+                    value={overview}
+                    onPaste={(e) => handlePaste(e, setOverview, overview)}
+                    onChange={(e) => setOverview(e.target.value)}
+                    placeholder="Provide a brief overview of your findings..."
+                    className="w-full min-h-[160px] bg-[#F8FAFC] border border-[#E2E8F0] rounded-[12px] p-6 text-sm font-bold text-[#0F172A] focus:outline-none focus:border-[#2563EB] focus:ring-4 focus:ring-blue-100 transition-all placeholder:text-[#94A3B8] resize-none"
                   />
                 </div>
+
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-[#94A3B8] uppercase tracking-[0.3em] ml-4">Future improvements</label>
+                  <label className="text-[10px] font-black text-[#94A3B8] uppercase tracking-[0.3em] ml-4">Applications in Real World</label>
                   <textarea
-                    value={improvements}
-                    value={improvements}
-                    onPaste={(e) => handlePaste(e, setImprovements, improvements)}
-                    onChange={(e) => setImprovements(e.target.value)}
-                    placeholder="Suggest enhancements for the protocol..."
-                    className="w-full min-h-[100px] bg-[#F8FAFC] border border-[#E2E8F0] rounded-[12px] p-6 text-sm font-bold text-[#0F172A] focus:outline-none focus:border-[#2563EB] focus:ring-4 focus:ring-blue-100 transition-all placeholder:text-[#94A3B8] resize-none"
+                    value={applications}
+                    onPaste={(e) => handlePaste(e, setApplications, applications)}
+                    onChange={(e) => setApplications(e.target.value)}
+                    placeholder="How can this be applied in real-world scenarios..."
+                    className="w-full min-h-[140px] bg-[#F8FAFC] border border-[#E2E8F0] rounded-[12px] p-6 text-sm font-bold text-[#0F172A] focus:outline-none focus:border-[#2563EB] focus:ring-4 focus:ring-blue-100 transition-all placeholder:text-[#94A3B8] resize-none"
                   />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-[#94A3B8] uppercase tracking-[0.3em] ml-4">Your thoughts</label>
+                    <textarea
+                      value={thoughts}
+                      onPaste={(e) => handlePaste(e, setThoughts, thoughts)}
+                      onChange={(e) => setThoughts(e.target.value)}
+                      placeholder="Share your personal analysis..."
+                      className="w-full min-h-[140px] bg-[#F8FAFC] border border-[#E2E8F0] rounded-[12px] p-6 text-sm font-bold text-[#0F172A] focus:outline-none focus:border-[#2563EB] focus:ring-4 focus:ring-blue-100 transition-all placeholder:text-[#94A3B8] resize-none"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-[#94A3B8] uppercase tracking-[0.3em] ml-4">Future improvements</label>
+                    <textarea
+                      value={improvements}
+                      onPaste={(e) => handlePaste(e, setImprovements, improvements)}
+                      onChange={(e) => setImprovements(e.target.value)}
+                      placeholder="Suggest enhancements for the protocol..."
+                      className="w-full min-h-[140px] bg-[#F8FAFC] border border-[#E2E8F0] rounded-[12px] p-6 text-sm font-bold text-[#0F172A] focus:outline-none focus:border-[#2563EB] focus:ring-4 focus:ring-blue-100 transition-all placeholder:text-[#94A3B8] resize-none"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="pt-8 mt-auto border-t border-[#F1F5F9] flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="pt-8 flex-shrink-0 border-t border-[#F1F5F9] flex flex-col md:flex-row items-center justify-between gap-6 bg-white">
                 <div className="flex gap-6">
                    <div className="flex items-center gap-2">
                       <Zap size={14} className="text-[#2563EB]" />
-                      <span className="text-[9px] font-black uppercase tracking-widest tracking-tighter">Instant Sync</span>
+                      <span className="text-[9px] font-black uppercase tracking-widest">Instant Sync</span>
                    </div>
                    <div className="flex items-center gap-2">
                       <Lock size={14} className="text-[#10B981]" />
-                      <span className="text-[9px] font-black uppercase tracking-widest tracking-tighter">Secure Handshake</span>
+                      <span className="text-[9px] font-black uppercase tracking-widest">Secure Handshake</span>
                    </div>
                 </div>
                 
-                <div className="flex flex-col gap-4">
-                  <div className="flex gap-6">
-                    <button
-                      type="button"
-                      disabled={aiChecking || !overview.trim() || !applications.trim() || !thoughts.trim() || !improvements.trim()}
-                      onClick={() => {
-                        setAiChecking(true);
-                        setShowAiModal(true);
-                        setAiResult(null);
-                        const totalLength = (overview + applications + thoughts + improvements).length;
-                        const wordCount = totalLength / 6;
-                        setTimeout(() => {
-                          const aiProb = Math.max(8, Math.min(22, (wordCount % 15) + 8));
-                          const auth = Math.min(99.9, 94 + (totalLength % 5) + (totalLength % 0.9));
-                          setAiResult({
-                            ai_generated: `${aiProb.toFixed(2)}%`,
-                            authenticity: `${auth.toFixed(2)}%`,
-                          });
-                          setAiChecking(false);
-                        }, 3000);
-                      }}
-                      className="bg-[#0F172A] text-white px-8 py-4 rounded-full font-black text-[11px] tracking-[0.4em] uppercase shadow-2xl hover:bg-blue-600 transition-all active:scale-[0.98] disabled:opacity-30 flex items-center gap-6 group"
-                    >
-                      {aiChecking ? (
-                        <div className="w-5 h-5 border-2 border-white/20 border-t-blue-500 rounded-full animate-spin" />
-                      ) : (
-                        <>
-                          <span>Check AI</span>
-                          <Cpu size={18} className="text-[#3B82F6]" />
-                        </>
-                      )}
-                    </button>
+                <div className="flex items-center gap-6">
+                  <button
+                    type="button"
+                    disabled={aiChecking || !overview.trim() || !applications.trim() || !thoughts.trim() || !improvements.trim()}
+                    onClick={() => {
+                      setAiChecking(true);
+                      setShowAiModal(true);
+                      setAiResult(null);
+                      const totalLength = (overview + applications + thoughts + improvements).length;
+                      const wordCount = totalLength / 6;
+                      setTimeout(() => {
+                        const aiProb = Math.max(8, Math.min(22, (wordCount % 15) + 8));
+                        const auth = Math.min(99.9, 94 + (totalLength % 5) + (totalLength % 0.9));
+                        setAiResult({
+                          ai_generated: `${aiProb.toFixed(2)}%`,
+                          authenticity: `${auth.toFixed(2)}%`,
+                        });
+                        setAiChecking(false);
+                      }, 3000);
+                    }}
+                    className="bg-[#0F172A] text-white px-8 py-4 rounded-full font-black text-[11px] tracking-[0.4em] uppercase shadow-2xl hover:bg-blue-600 transition-all active:scale-[0.98] disabled:opacity-30 flex items-center gap-6 group"
+                  >
+                    {aiChecking ? (
+                      <div className="w-5 h-5 border-2 border-white/20 border-t-blue-500 rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        <span>Check AI</span>
+                        <Cpu size={18} className="text-[#3B82F6]" />
+                      </>
+                    )}
+                  </button>
 
-                    <button
-                      type="submit"
-                      disabled={status === "submitting" || !overview.trim() || !applications.trim() || !thoughts.trim() || !improvements.trim()}
-                      className="bg-[#0F172A] text-white px-10 py-4 rounded-full font-black text-[11px] tracking-[0.4em] uppercase shadow-2xl hover:bg-blue-600 transition-all active:scale-[0.98] disabled:opacity-30"
-                    >
-                      {status === "submitting" ? (
-                        <div className="w-5 h-5 border-2 border-white/20 border-t-blue-500 rounded-full animate-spin" />
-                      ) : (
-                        <span>{status === "success" ? "ARCHIVED" : "Execute Submission"}</span>
-                      )}
-                    </button>
-                  </div>
+                  <button
+                    type="submit"
+                    disabled={status === "submitting" || !overview.trim() || !applications.trim() || !thoughts.trim() || !improvements.trim()}
+                    className="bg-[#0F172A] text-white px-10 py-4 rounded-full font-black text-[11px] tracking-[0.4em] uppercase shadow-2xl hover:bg-blue-600 transition-all active:scale-[0.98] disabled:opacity-30"
+                  >
+                    {status === "submitting" ? (
+                      <div className="w-5 h-5 border-2 border-white/20 border-t-blue-500 rounded-full animate-spin" />
+                    ) : (
+                      <span>{status === "success" ? "ARCHIVED" : "Execute Submission"}</span>
+                    )}
+                  </button>
                 </div>
               </div>
             </form>
